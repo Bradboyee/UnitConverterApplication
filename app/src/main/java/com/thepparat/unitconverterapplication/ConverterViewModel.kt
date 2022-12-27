@@ -1,5 +1,7 @@
 package com.thepparat.unitconverterapplication
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thepparat.unitconverterapplication.data.Conversion
@@ -8,8 +10,17 @@ import com.thepparat.unitconverterapplication.data.ConverterRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ConverterViewModel(private val repository: ConverterRepository) : ViewModel() {
-    fun getConversion() = listOf<Conversion>(
+class ConverterViewModel(
+    private val repository: ConverterRepository,
+
+) : ViewModel() {
+
+    val selectedConversion: MutableState<Conversion?> = mutableStateOf(null)
+    val inputText: MutableState<String> = mutableStateOf("")
+    val typeValue = mutableStateOf("0.0")
+
+
+    fun getConversion() = listOf(
         Conversion(1, "Pounds to Kilograms", "lbs", "kg", 0.4535592),
         Conversion(2, "Kilograms to Pounds", "kg", "lbs", 2.20462),
         Conversion(3, "Yards to Meters", "yd", "m", 0.9144),
@@ -23,5 +34,20 @@ class ConverterViewModel(private val repository: ConverterRepository) : ViewMode
             repository.insertResult(ConversionResult(0, message1, message2))
         }
     }
+
+    val resultList = repository.getSavedResult()
+
+    fun removeResult(result: ConversionResult) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteResult(result)
+        }
+    }
+
+    fun clearAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllResult()
+        }
+    }
+
 
 }

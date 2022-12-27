@@ -1,4 +1,4 @@
-package com.thepparat.unitconverterapplication.ui.theme
+package com.thepparat.unitconverterapplication.compose.converter
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -21,10 +22,11 @@ import com.thepparat.unitconverterapplication.data.Conversion
 
 @Composable
 fun ConversionMenu(
+    isLandScape: Boolean,
     list: List<Conversion>, modifier: Modifier = Modifier,
     convert: (Conversion) -> Unit
 ) {
-    var displayText by remember {
+    var displayText by rememberSaveable {
         mutableStateOf("Select you conversion type")
     }
     var textFiledSize by remember {
@@ -40,25 +42,44 @@ fun ConversionMenu(
         Icons.Filled.KeyboardArrowDown
     }
     Column {
-
-        OutlinedTextField(
-            value = displayText,
-            onValueChange = { displayText = it },
-            textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
-            modifier = modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    textFiledSize = coordinates.size.toSize()
-                },
-            label = { Text(text = "Conversation type") },
-            trailingIcon = {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = "icon",
-                    modifier = modifier.clickable { expanded = !expanded }
-                )
-            }, readOnly = true
-        )
+        if (isLandScape) {
+            OutlinedTextField(
+                value = displayText,
+                onValueChange = { displayText = it },
+                textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                modifier = modifier
+                    .onGloballyPositioned { coordinates ->
+                        textFiledSize = coordinates.size.toSize()
+                    },
+                label = { Text(text = "Conversation type") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "icon",
+                        modifier = modifier.clickable { expanded = !expanded }
+                    )
+                }, readOnly = true
+            )
+        }else {
+            OutlinedTextField(
+                value = displayText,
+                onValueChange = { displayText = it },
+                textStyle = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                modifier = modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        textFiledSize = coordinates.size.toSize()
+                    },
+                label = { Text(text = "Conversation type") },
+                trailingIcon = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = "icon",
+                        modifier = modifier.clickable { expanded = !expanded }
+                    )
+                }, readOnly = true
+            )
+        }
 
         DropdownMenu(
             expanded = expanded,
